@@ -45,25 +45,27 @@ const PRODUCTS = [
   {
     name: "Asus Vivobook Go 14 E1404FA-EB935W",
     price: "18.290.000đ", old: "19.990.000đ (-9%)",
-    cpu: "AMD Ryzen 5, 2.8–4.3GHz", ram: "16GB DDR5",
-    ramUpgrade: "KHÔNG nâng cấp được (RAM hàn trên bo)",
-    ssd: "512GB NVMe", screen: '14" FHD 1920×1080, 60Hz', nits: "—", gamut: "—",
-    gpu: "Radeon tích hợp (không có card rời)", battery: "42Wh", weight: "1,3 kg",
-    warranty: "24 tháng tại nơi sử dụng, pin 12 tháng, đổi trong 30 ngày", os: "Windows 11",
-    gifts: "Chuột không dây, balo, vệ sinh máy trọn đời, ưu đãi HSSV tới 1,5 triệu",
+    cpu: "AMD Ryzen 5, 4 lõi 8 luồng, 2.8–4.3GHz", ram: "16GB DDR5 (onboard)",
+    ramUpgrade: "KHÔNG nâng cấp được — RAM hàn trên bo, hãng ghi hỗ trợ tối đa 16GB, không có khe",
+    ssd: "512GB M.2 NVMe PCIe (1 khay)", screen: '14" FHD 1920×1080, 60Hz, LED-Backlit',
+    nits: "—", gamut: "—",
+    gpu: "AMD Radeon tích hợp (không có card rời)", battery: "42Wh, 3 cell", weight: "1,3 kg — nhẹ nhất nhóm Windows",
+    warranty: "24 tháng tại nơi sử dụng, pin 12 tháng, đổi trong 30 ngày", os: "Windows 11 Home",
+    gifts: "Chuột không dây, balo Phúc Anh, vệ sinh máy trọn đời; giảm 30% gói bảo hành rơi vỡ ADP khi mua kèm",
     bestFor: "Ngôn ngữ, sư phạm, luật, du lịch, kinh tế — nhóm cần nhẹ và rẻ",
-    weakness: "RAM hàn sẵn nên 16GB là mức tối đa vĩnh viễn; màn 1080p 60Hz ở mức cơ bản, không phù hợp nếu làm màu",
+    weakness: "RAM hàn sẵn nên 16GB là mức tối đa vĩnh viễn; màn 1080p 60Hz ở mức cơ bản và chưa công bố độ phủ màu, không phù hợp nếu làm màu; vỏ nhựa",
     url: "https://www.phucanh.vn/laptop-asus-vivobook-go-14-e1404fa-eb935w.html",
   },
   {
     name: "Apple MacBook Neo A18 Pro 13 inch",
     price: "18.690.000đ", old: "19.990.000đ (-7%)",
-    cpu: "Apple A18 Pro, 6 lõi CPU, 5 lõi GPU", ram: "8GB",
+    cpu: "Apple A18 Pro, 6 lõi CPU, 5 lõi GPU, băng thông bộ nhớ 60GB/s", ram: "8GB",
     ramUpgrade: "KHÔNG nâng cấp được", ssd: "256GB (không nâng cấp được)",
-    screen: '13" Liquid Retina 2560×1664', nits: "—", gamut: "—",
-    gpu: "GPU tích hợp 5 lõi", battery: "36.5Wh", weight: "1,23 kg — nhẹ nhất bộ 6 máy",
-    warranty: "12 tháng tại trung tâm uỷ quyền Apple", os: "macOS",
-    gifts: "Giảm 3% Magic Mouse, giảm tới 500.000đ màn rời, giảm 5% adapter",
+    screen: '13" Liquid Retina 2560×1664 — tần số quét hãng không công bố',
+    nits: "500 nits", gamut: "Hãng ghi hỗ trợ 1 tỷ màu, KHÔNG công bố % sRGB",
+    gpu: "GPU tích hợp 5 lõi", battery: "36,5Wh", weight: "1,23 kg — nhẹ nhất bộ 6 máy",
+    warranty: "12 tháng tại trung tâm bảo hành chính hãng Apple Việt Nam", os: "macOS",
+    gifts: "Giảm 3% Magic Mouse, giảm tới 500.000đ màn rời, giảm 5% adapter, giảm tới 100.000đ phần mềm",
     bestFor: "Người ưu tiên nhẹ và màn sắc nét, làm việc văn bản và biên tập ảnh nhẹ",
     weakness: "8GB RAM và 256GB SSD đều không nâng cấp được, 256GB chật rất nhanh; nhiều phần mềm ngành kỹ thuật như SolidWorks, AutoCAD bản Windows KHÔNG chạy trên macOS",
     url: "https://www.phucanh.vn/laptop-apple-macbook-neo-a18-pro-6-core-cpu-5-core-gpu-8gb-256gb-ssd-13inch-xanh-indigo.html",
@@ -71,65 +73,78 @@ const PRODUCTS = [
   {
     name: "Acer Aspire Lite 14 AL14-71P-55P9",
     price: "19.190.000đ", old: "23.387.000đ (-18%)",
-    cpu: "Intel Core i5-13500H, 12 lõi 16 luồng, tới 4.7GHz", ram: "16GB DDR5 4800",
+    cpu: "Intel Core i5-13500H, 12 lõi 16 luồng, 2.6–4.7GHz", ram: "16GB DDR5",
     ramUpgrade: "2 khe, nâng tới 64GB", ssd: "512GB NVMe PCIe",
-    screen: '14" WUXGA 1920×1200 IPS', nits: "—", gamut: "—",
-    gpu: "Intel Iris Xe (không có card rời)", battery: "58Wh — lớn nhất bộ 6 máy",
-    weight: "1,5 kg", warranty: "24 tháng tại hãng, pin 12 tháng, đổi trong 30 ngày", os: "Windows 11",
-    gifts: "Chuột không dây, balo laptop, vệ sinh máy trọn đời, giảm 10% khi mua kèm bàn phím/chuột",
+    screen: '14" WUXGA 1920×1200 IPS — tần số quét hãng không công bố',
+    nits: "—", gamut: "—",
+    gpu: "Intel Iris Xe (không có card rời)", battery: "58Wh, 3 cell, sạc 65W — pin lớn nhất bộ 6 máy",
+    weight: "1,5 kg (vỏ hợp kim nhôm)", warranty: "24 tháng tại hãng, pin 12 tháng, đổi trong 30 ngày",
+    os: "Windows 11 Home",
+    gifts: "Chuột không dây, bàn di chuột, balo laptop, vệ sinh máy trọn đời; giảm 10% khi mua kèm phím/chuột/gaming gear",
     bestFor: "Kinh tế, kế toán, y, dược, CNTT năm đầu — nhóm cần pin trâu và nâng cấp được",
-    weakness: "Không có card đồ họa rời nên không dành cho dựng phim hay game nặng; chưa công bố độ phủ màu",
+    weakness: "Không có card đồ hoạ rời nên không dành cho dựng phim hay game nặng; chưa công bố độ phủ màu lẫn tần số quét",
     url: "https://www.phucanh.vn/laptop-acer-aspire-lite-14-al14-71p-55p9.html",
   },
   {
     name: "Dell 14 DC14250 DC4C5386W",
-    price: "23.990.000đ", old: "28.790.000đ (-17%)",
-    cpu: "Intel Core 5 120U, 10 lõi 12 luồng, tới 5.0GHz", ram: "16GB DDR5 5200",
+    price: "25.990.000đ", old: "28.790.000đ (-10%)",
+    cpu: "Intel Core 5 120U, 10 lõi 12 luồng, 1.4–5.0GHz", ram: "16GB DDR5",
     ramUpgrade: "2 khe, nâng tới 32GB", ssd: "512GB NVMe",
-    screen: '14" WUXGA 1920×1200 IPS chống chói', nits: "300 nits", gamut: "—",
-    gpu: "Intel UHD Graphics (không có card rời)", battery: "54Wh", weight: "1,56 kg",
-    warranty: "12 tháng tại hãng và tại nơi sử dụng", os: "Windows 11",
-    gifts: "Office Home 2024 bản quyền vĩnh viễn, Microsoft 365 Basic 1 năm, chuột, lót chuột, balo, vệ sinh trọn đời",
+    screen: '14" WUXGA 1920×1200 IPS chống chói — tần số quét hãng không công bố',
+    nits: "300 nits", gamut: "—",
+    gpu: "Intel UHD Graphics (không có card rời)", battery: "54Wh, 4 cell", weight: "1,56 kg",
+    warranty: "12 tháng tại hãng và tại nơi sử dụng", os: "Windows 11 Home + Office Home 2024 + Microsoft 365 Basic 1 năm",
+    gifts: "Office Home 2024 bản quyền vĩnh viễn, Microsoft 365 Basic 1 năm, chuột không dây cao cấp, bàn di chuột, túi chống sốc, cặp hoặc balo, vệ sinh trọn đời",
     bestFor: "Người chưa có Office bản quyền; học ở nơi nhiều ánh sáng vì màn 300 nits chống chói",
-    weakness: "Bảo hành chỉ 12 tháng, ngắn hơn Asus và Acer; đồ họa UHD yếu nhất bộ 6 máy",
+    weakness: "Bảo hành chỉ 12 tháng, ngắn hơn Asus và Acer; đồ hoạ UHD yếu nhất bộ 6 máy; giá đã tăng lên 25.990.000đ nên không còn rẻ hơn Lenovo LOQ",
     url: "https://www.phucanh.vn/laptop-dell-14-dc14250-dc4c5386w.html",
   },
   {
     name: "Lenovo LOQ Gaming 15ARP10E 83S0000DVN",
     price: "25.990.000đ", old: "35.990.000đ (-28%)",
-    cpu: "AMD Ryzen 5 7535HS, 6 lõi 12 luồng, tới 4.55GHz", ram: "16GB DDR5 4800",
-    ramUpgrade: "Nâng được, 2 khe", ssd: "512GB NVMe",
-    screen: '15.6" FHD 1920×1080 IPS, 144Hz', nits: "300 nits",
-    gamut: "100% sRGB — máy DUY NHẤT trong 6 máy có công bố độ phủ màu",
-    gpu: "NVIDIA RTX 3050 6GB GDDR6", battery: "4 cell", weight: "1,8 kg",
-    warranty: "24 tháng tại hãng và tại nơi sử dụng, pin 12 tháng", os: "Windows 11",
-    gifts: "Voucher 500.000đ, chuột laptop, túi chống sốc, balo gaming, vệ sinh trọn đời",
+    cpu: "AMD Ryzen 5 7535HS, 6 lõi 12 luồng, 3.3–4.55GHz", ram: "16GB DDR5",
+    ramUpgrade: "2 khe RAM, NHƯNG trang ghi hãng hỗ trợ tối đa 16GB — hai thông tin mâu thuẫn, phải bảo người dùng hỏi kỹ nhân viên trước khi tính chuyện nâng",
+    ssd: "512GB NVMe",
+    screen: '15.6" FHD 1920×1080 IPS, 144Hz, chống chói, FreeSync',
+    nits: "300 nits", gamut: "100% sRGB — cao nhất bộ 6 máy",
+    gpu: "NVIDIA RTX 3050 6GB GDDR6", battery: "4 cell (hãng không công bố số Wh)", weight: "1,8 kg",
+    warranty: "24 tháng tại hãng và tại nơi sử dụng, pin 12 tháng", os: "Windows 11 Home",
+    gifts: "Voucher tiền mặt 500.000đ, chuột laptop, bàn di chuột, túi chống sốc, balo Lenovo Gaming chính hãng, vệ sinh trọn đời",
     bestFor: "Thiết kế, kiến trúc, cơ khí, CAD, media — nhóm cần chuẩn màu và card rời",
-    weakness: "Pin không trâu bằng nhóm máy học tập và quạt ồn khi chạy nặng; 1,8kg vẫn nặng nếu ngày nào cũng mang đi học",
+    weakness: "Máy đồ hoạ nên pin không trâu bằng nhóm học tập và quạt ồn khi chạy nặng; 1,8kg vẫn nặng nếu ngày nào cũng mang đi học; thông tin nâng RAM trên trang mâu thuẫn",
     url: "https://www.phucanh.vn/laptop-lenovo-loq-gaming-15arp10e-83s0000dvn.html",
   },
   {
     name: "HP Gaming Victus 15-fa2452TX D44VLPA",
     price: "27.390.000đ", old: "29.990.000đ (-9%)",
-    cpu: "Intel Core i5-13420H, 8 lõi 12 luồng, tới 4.6GHz", ram: "16GB DDR5 5200",
-    ramUpgrade: "Nâng tới 32GB", ssd: "512GB NVMe",
-    screen: '15.6" FHD 1920×1080 IPS chống chói, 144Hz', nits: "300 nits", gamut: "—",
-    gpu: "NVIDIA RTX 3050 6GB GDDR6", battery: "52.5Wh",
-    weight: "2,29 kg — nặng nhất bộ 6 máy", warranty: "12 tháng tại hãng và tại nơi sử dụng, đổi trong 30 ngày",
-    os: "Windows 11",
-    gifts: "Chuột không dây, balo, túi chống sốc, ưu đãi tân sinh viên tới 5 triệu, giảm 10% gia hạn bảo hành",
-    bestFor: "Cơ khí, CAD, CNTT cần biên dịch nặng; có cổng LAN RJ45 tiện phòng lab",
-    weakness: "Nặng 2,29kg, gần gấp đôi MacBook; bảo hành chỉ 12 tháng, ngắn hơn Lenovo LOQ một năm dù đắt hơn 1,4 triệu",
+    cpu: "Intel Core i5-13420H, 8 lõi 12 luồng, 2.1–4.6GHz", ram: "16GB DDR5",
+    ramUpgrade: "2 khe, nâng tới 32GB", ssd: "512GB NVMe",
+    screen: '15.6" FHD 1920×1080 IPS chống chói, 144Hz',
+    nits: "300 nits", gamut: "62,5% sRGB — hãng CÓ công bố, và đây là con số thấp",
+    gpu: "NVIDIA RTX 3050 6GB GDDR6", battery: "52,5Wh, 3 cell",
+    weight: "2,29 kg — nặng nhất bộ 6 máy", warranty: "12 tháng tại hãng và tại nơi sử dụng",
+    os: "Windows 11 Home",
+    gifts: "Voucher Got It tới 600.000đ khi mua tại showroom (01/08–31/08/2026), chuột không dây, balo Phúc Anh, túi chống sốc, vệ sinh trọn đời, giảm 10% gói bảo hành mở rộng HP",
+    bestFor: "Cơ khí, CAD, CNTT cần biên dịch nặng; có cổng LAN RJ45 tiện phòng lab; thân dày nên tản nhiệt thoáng",
+    weakness: "Nặng 2,29kg, gần gấp đôi MacBook; bảo hành chỉ 12 tháng, ngắn hơn Lenovo LOQ một năm dù đắt hơn 1,4 triệu; màn chỉ phủ 62,5% sRGB nên KHÔNG nên chọn cho ngành thiết kế — Lenovo LOQ 100% sRGB rẻ hơn và nhẹ hơn",
     url: "https://www.phucanh.vn/laptop-hp-gaming-victus-15-fa2452tx-d44vlpa.html",
   },
 ];
 
 const PROMOS = `
-- "Điểm càng cao quà càng lớn": đổi điểm thi lấy ưu đãi, mức cao nhất tới 5.000.000đ. Hạn 31/08.
-- "Đồng hành mùa tựu trường": ưu đãi học sinh sinh viên tới 1.500.000đ, tuỳ dòng máy.
+Ưu đãi ghi trên trang sản phẩm phucanh.vn ngày 09/08/2026, áp dụng cho cả sáu máy trừ khi ghi khác:
+- Giảm tới 5.000.000đ cho TÂN SINH VIÊN.
+- Giảm tới 1.500.000đ cho học sinh, sinh viên và giáo viên.
+- Giảm tới 500.000đ cho màn hình rời khi mua kèm; giảm 10% phụ kiện laptop (giá làm mát, túi, cặp, balo);
+  giảm 5% bộ chuyển đổi; giảm 3% loa; giảm 3% RAM laptop khi mua kèm.
+- Riêng HP Victus: tặng voucher Got It tới 600.000đ khi mua tại showroom, áp dụng 01/08–31/08/2026.
+- Riêng Asus: giảm 30% gói dịch vụ bảo hành rơi vỡ ADP 1 năm hoặc 2 năm khi mua kèm.
+- Riêng Lenovo LOQ: tặng voucher tiền mặt 500.000đ.
 - Trả góp 0% qua thẻ và công ty tài chính. Giao nhanh 2 giờ nội thành Hà Nội.
 - Vệ sinh máy miễn phí trọn đời tại 5 showroom.
-LƯU Ý CHO PANA: chỉ nói ở mức này, KHÔNG đọc từng bậc điều khoản, và luôn nhắc người dùng tự đọc điều kiện.
+LƯU Ý CHO PANA: chỉ nói ở mức này, KHÔNG đọc từng bậc điều khoản, và luôn nhắc người dùng tự đọc điều kiện
+trên trang sản phẩm. Chương trình đổi điểm thi lấy ưu đãi do Phúc Anh công bố riêng — nếu người dùng hỏi bậc
+điểm cụ thể thì bảo họ hỏi nhân viên, PANA không đọc thay.
 `;
 
 const RETURN_PROCESS = `
@@ -313,7 +328,10 @@ export default {
       sys += `\n\n# NGỮ CẢNH TỪ TRANG WEB (người dùng vừa làm quiz)\n${body.context.slice(0, 800)}`;
     }
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${env.GEMINI_API_KEY}`;
+    // Key gửi qua header x-goog-api-key (cách Google khuyến nghị) thay vì nhét vào query string:
+    // tránh hỏng URL nếu key dính khoảng trắng hoặc xuống dòng lúc dán, và key không lọt vào log URL.
+    const apiKey = String(env.GEMINI_API_KEY).trim();
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
     const payload = {
       system_instruction: { parts: [{ text: sys }] },
       contents,
@@ -333,13 +351,16 @@ export default {
     try {
       const r = await fetch(url, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
         body: JSON.stringify(payload),
       });
 
       if (!r.ok) {
         const detail = await r.text();
-        console.log("Gemini error", r.status, detail.slice(0, 400));
+        // Log để chẩn đoán bằng `npx wrangler tail`. KHÔNG log nội dung key, chỉ log độ dài và
+        // hình dạng — đủ để biết key có bị dán thiếu/thừa ký tự hay không.
+        console.log("Gemini error", r.status, "| keyLen", apiKey.length,
+          "| keyShapeOk", /^AIza[A-Za-z0-9_-]{35}$/.test(apiKey), "|", detail.slice(0, 400));
         return json({
           error: "upstream",
           reply: "PANA đang chưa kết nối được, bạn thử lại sau một chút nhé. " +
