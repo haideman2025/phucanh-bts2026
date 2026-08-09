@@ -24,6 +24,7 @@
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:76px}
+html{-webkit-text-size-adjust:100%}
 body{font-family:'Be Vietnam Pro',system-ui,sans-serif;background:var(--bg);color:var(--ink);
  line-height:1.62;font-size:15.5px;-webkit-font-smoothing:antialiased}
 .wrap{max-width:1200px;margin:0 auto;padding:0 20px}
@@ -165,7 +166,8 @@ ul.why li:before{content:"✓";position:absolute;left:0;color:var(--green);font-
 .specs li{padding:4px 0;border-bottom:1px dashed var(--line);display:flex;justify-content:space-between;gap:10px}
 .specs li b{color:var(--navy);font-weight:600;text-align:right}
 .card .foot{margin-top:auto}
-.card .acts{display:flex;gap:8px;margin-top:12px}
+.acts{display:flex;flex-wrap:wrap;gap:8px}
+.card .acts{margin-top:12px}
 .card .acts .btn{flex:1;text-align:center}
 
 /* compare */
@@ -228,9 +230,11 @@ table.cmp tbody th{background:#F8FAFD;color:var(--navy);font-weight:600;font-siz
 @keyframes float{0%,100%{transform:translateY(0) rotate(-1.5deg)}50%{transform:translateY(-13px) rotate(1.5deg)}}
 @keyframes jet{0%,100%{opacity:.55;transform:translateX(-50%) scaleY(.8)}50%{opacity:1;transform:translateX(-50%) scaleY(1.25)}}
 @keyframes shad{0%,100%{transform:scale(1);opacity:.22}50%{transform:scale(.78);opacity:.12}}
-@media(max-width:520px){#mascot{width:96px}
- .mfig{width:86px;height:122px} .mb{width:184px;bottom:146px;font-size:12.6px}
- .mlabel{font-size:12.4px;padding:6px 12px}}
+@media(max-width:640px){#mascot{width:78px}
+ .mfig{width:70px;height:99px} .mb{width:172px;bottom:122px;font-size:12.4px;padding:9px 11px}
+ .mb img{width:26px;height:26px}
+ .mlabel{font-size:11.8px;padding:5px 11px}
+ .mshadow{width:42px}}
 @media(prefers-reduced-motion:reduce){
  .mbob,.mglow,.mshadow{animation:none!important} .mb{transition:none} #mtrail{display:none}}
 #chat{position:fixed;right:20px;bottom:20px;width:404px;max-width:calc(100vw - 32px);height:min(690px,calc(100vh - 40px));
@@ -240,7 +244,7 @@ table.cmp tbody th{background:#F8FAFD;color:var(--navy);font-weight:600;font-siz
 .ch-h{background:var(--navy);color:#fff;padding:14px 16px;display:flex;align-items:center;gap:12px}
 .ch-h b{font-size:15px} .ch-h small{display:block;color:#9FB3D9;font-size:11.6px}
 .ch-h .x{margin-left:auto;background:none;border:0;color:#9FB3D9;font-size:22px;cursor:pointer;line-height:1}
-.ch-b{flex:1;overflow-y:auto;padding:16px;background:#F7F9FC}
+.ch-b{flex:1;overflow-y:auto;overscroll-behavior:contain;padding:16px;background:#F7F9FC}
 .msg{margin-bottom:12px;display:flex;gap:9px;align-items:flex-start}
 .msg .bub{background:#fff;border:1px solid var(--line);border-radius:14px 14px 14px 4px;padding:11px 14px;
  font-size:14px;max-width:86%;color:#26334A}
@@ -301,24 +305,49 @@ footer a{color:#BBD0F0}
 .bub ul.g{margin:6px 0 2px 17px}
 
 @media(max-width:640px){
- #chat{right:0;left:0;top:0;bottom:0;width:auto;max-width:none;height:auto;border-radius:0;border:0}
+ /* 100dvh chu khong phai 100vh: iOS tinh 100vh ke ca phan thanh dia chi che mat,
+    nen o day dung dvh de o nhap lieu khong bi truot xuong duoi day man hinh. */
+ #chat{right:0;left:0;top:0;bottom:auto;width:auto;max-width:none;
+  height:100vh;height:100dvh;border-radius:0;border:0}
  .ch-h{padding:12px 14px;padding-top:calc(12px + env(safe-area-inset-top))}
  .ch-b{padding:14px 13px}
- .qr{padding:8px 12px}
+ .qr{padding:9px 12px}
+ .qr button{font-size:13px;padding:9px 13px}
  .ch-f{padding:10px 12px;padding-bottom:calc(10px + env(safe-area-inset-bottom))}
- .msg .bub{max-width:90%}
+ /* 16px la nguong: duoi nguong nay Safari tu phong to ca trang khi bam vao o
+    nhap lieu, va khong bao gio thu nho lai. */
+ .ch-f input{font-size:16px;padding:12px 13px}
+ .ch-f button{width:48px}
+ .msg .bub{max-width:90%;font-size:14.6px}
+ body.chatting{overflow:hidden}
 }
 @media(max-width:820px){
  #mbar{display:flex}
- body{padding-bottom:72px}
+ body{padding-bottom:calc(78px + env(safe-area-inset-bottom))}
+ /* Dau trang tren dien thoai cao 56px chu khong phai 66px */
+ html{scroll-padding-top:64px}
  .cmp-hint{display:flex}
  .top-in{height:56px;gap:10px}
  .brand img{height:28px}
  /* Nav thanh hang chip vuot ngang, khong bo di: nguoi dung dien thoai cung can nhay khuc */
  .top nav{margin-left:auto;overflow-x:auto;flex-wrap:nowrap;scrollbar-width:none;-webkit-overflow-scrolling:touch}
  .top nav::-webkit-scrollbar{display:none}
- .top nav a{white-space:nowrap;font-size:12.6px;padding:7px 9px}
+ /* Ngon tay can khoang 42px moi bam trung; truoc do link chi cao ~31px */
+ .top nav a{white-space:nowrap;font-size:12.6px;display:flex;align-items:center;
+  min-height:42px;padding:0 10px}
  .top .btn.sm{display:none}
+ /* Bang so sanh rong 900px: vuot ngang la mat luon ten hang, khong biet con so
+    dang doc la RAM hay gia. Ghim cot ten lai. */
+ table.cmp tbody th{position:sticky;left:0;z-index:2;width:118px;min-width:118px;
+  font-size:12.2px;padding:10px;box-shadow:1px 0 0 var(--line)}
+ table.cmp thead th:first-child{position:sticky;left:0;z-index:3}
+ table.cmp th,table.cmp td{padding:10px 12px}
+ /* Sau chip loc xuong ba hang tren dien thoai. Cho thanh mot hang vuot ngang,
+    tran ra sat hai mep de nguoi dung thay ngay la con nua. */
+ .filters{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;
+  -webkit-overflow-scrolling:touch;margin:0 -20px 20px;padding:0 20px 3px}
+ .filters::-webkit-scrollbar{display:none}
+ .chip{flex:0 0 auto;white-space:nowrap}
  .hero{padding:40px 0 46px}
  .trust{grid-template-columns:1fr 1fr;gap:9px}
  .trust div{padding:11px 13px;font-size:12.6px}
@@ -326,9 +355,17 @@ footer a{color:#BBD0F0}
  .sec-h h2{font-size:23px}
  section{padding:40px 0}
 }
-@media(max-width:460px){
- .top nav a{font-size:12px;padding:6px 7px}
- .trust{grid-template-columns:1fr}
+@media(max-width:480px){
+ .top nav a{font-size:12px;padding:0 8px}
+ /* Bon o cam ket xep mot cot thi hero dai them ca man hinh moi cuon het.
+    Giu hai cot, chi thu chu lai. */
+ .trust div{padding:10px 12px;font-size:12px}
+ .trust b{font-size:13.6px}
+ .acts .btn{flex:1 1 100%;text-align:center}
+ .card .acts .btn{flex:1 1 0;padding:10px 6px;font-size:12.6px}
+ .sec-h p{font-size:14.6px}
+ .pana-head{gap:12px}
+ .pana-av{width:52px;height:52px}
 }
 @media print{ #mascot,#mtrail,#chat,.top{display:none} body{background:#fff} }
 </style>
@@ -750,7 +787,7 @@ function renderResult(){
     const r = document.querySelector('.pick');
     if (r) {
       const b = r.getBoundingClientRect();
-      if (b.top < innerHeight - 80 && b.bottom > 80)
+      if (innerWidth >= 760 && b.top < innerHeight - 80 && b.bottom > 80)
         PM.fly({x: Math.max(12, Math.min(innerWidth-150, b.right-152)), y: Math.max(12, b.top-26)});
     }
     setTimeout(()=>{ PM.trick('loop', 1000); PM.pose('cheer', 2600, false); }, 700);
@@ -1079,7 +1116,7 @@ window.PM = (function(){
 
   function perches(){
     const vw=innerWidth,vh=innerHeight,w=W(),h=H(),L=[];
-    if(vw<760) return [{x:vw-w-12,y:vh-h-90},{x:vw-w-12,y:vh*0.58}];
+    if(vw<760) return [home()];   // dien thoai: chi mot cho dau, xem chu thich beatFn
     L.push({x:vw-w-26,y:Math.max(88,vh*0.20)});
     L.push({x:vw-w-26,y:vh*0.52});
     if(vw>=1440){ L.push({x:22,y:vh*0.32}); L.push({x:22,y:vh*0.64}); }
@@ -1170,6 +1207,18 @@ window.PM = (function(){
   function beatFn(){
     if(chatOn){ nextBeat(6000); return; }
     if(Date.now()-lastAct>70000){ sleep(); return; }
+    /* Dien thoai: man hep, PANA bay ngang la de len dung doan dang doc, con bong
+       thoai tu bat len moi vai giay thi thanh ra quay ray. Dung yen mot cho, chi
+       nhun nhay va doi tu the. PANA van noi — nhung chi khi nguoi dung lam gi do:
+       doi khuc, bam loc, tra loi quiz. Phan ung thi huu ich, tu bat thi phien. */
+    if(innerWidth<760){
+      const p=home();
+      if(Math.abs(tx-p.x)>2||Math.abs(ty-p.y)>2) fly(p);
+      if(Math.random()<0.5) trick(pick(['hop','wave']),820);
+      else setPose(pick(['wave','laptop','think']),2200,false);
+      nextBeat(9000+Math.random()*7000);
+      return;
+    }
     const r=Math.random();
     if(r<0.40){
       let dst;
@@ -1251,7 +1300,7 @@ window.PM = (function(){
   document.addEventListener('visibilitychange',()=>{ paused=document.hidden; });
 
   hit.addEventListener('mouseenter',()=>{
-    if(chatOn)return; act(); setPose('wave',1900,false);
+    if(chatOn||matchMedia('(hover:none)').matches)return; act(); setPose('wave',1900,false);
     say('Bấm vào mình để hỏi bất cứ thứ gì về 6 máy.','happy',3600);
   });
   hit.onclick=()=>toggleChat(true);
