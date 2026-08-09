@@ -1,0 +1,13 @@
+name = "pana-ai"
+main = "pana-worker.js"
+compatibility_date = "2026-08-01"
+
+# Giới hạn chống lạm dụng: 30 lượt mỗi IP trong 10 phút (sửa RATE_LIMIT trong pana-worker.js).
+# Namespace đã tạo sẵn ngày 09/08/2026 bằng: npx wrangler kv namespace create PANA_RL
+[[kv_namespaces]]
+binding = "PANA_RL"
+id = "fc4c96fa04864a8b8559f0d8e355f1a2"
+
+# KHÔNG BAO GIỜ đặt GEMINI_API_KEY ở file này — file này sẽ bị commit lên GitHub.
+# Cài key bằng lệnh (key chỉ nằm trên server Cloudflare):
+#   npx wrangler secret put GEMINI_API_KEY

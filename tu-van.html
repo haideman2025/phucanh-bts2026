@@ -198,10 +198,45 @@ footer{background:var(--navy);color:#9FB3D9;padding:44px 0 50px;font-size:13.6px
 footer h4{color:#fff;font-size:15.4px;margin-bottom:10px}
 .fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:26px}
 footer a{color:#BBD0F0}
+/* hiệu ứng PANA đang gõ */
+.dots{display:inline-flex;gap:4px;align-items:center;height:18px}
+.dots i{width:6px;height:6px;border-radius:50%;background:#93A8CF;display:block;animation:bl 1.2s infinite}
+.dots i:nth-child(2){animation-delay:.18s} .dots i:nth-child(3){animation-delay:.36s}
+@keyframes bl{0%,60%,100%{opacity:.25;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+.eng{display:inline-flex;align-items:center;gap:5px;background:rgba(15,157,88,.12);
+ border:1px solid rgba(15,157,88,.45);color:#0F9D58;font-size:11.4px;font-weight:700;
+ padding:2px 9px;border-radius:999px;margin-left:8px;letter-spacing:.4px}
+.ch-h .eng{background:rgba(79,168,255,.16);border-color:rgba(79,168,255,.4);color:#9FD0FF}
+.bub ul.g{margin:6px 0 2px 17px}
+
 @media print{ #fab,#chat,.top{display:none} body{background:#fff} }
 </style>
 </head>
 <body>
+
+<!-- ════════════════════════════════════════════════════════════════════
+     CẤU HÌNH PANA — CHỈ SỬA ĐÚNG MỘT DÒNG "api" DƯỚI ĐÂY
+     ────────────────────────────────────────────────────────────────
+     • Để rỗng ""  → PANA chạy bằng bộ luật có sẵn trong trang.
+                      Trả lời tức thì, không cần mạng, không tốn tiền,
+                      nhưng chỉ đúng với các câu hỏi đã lường trước.
+     • Điền URL Worker → PANA chạy bằng Gemini: suy luận được câu hỏi lạ,
+                      nhớ ngữ cảnh hội thoại, cá nhân hoá theo kết quả quiz.
+                      Nếu mạng lỗi, tự động lùi về bộ luật — người dùng
+                      không bao giờ gặp màn hình trắng.
+
+     URL lấy ở đâu: chạy `npx wrangler deploy` trong thư mục pana-ai/,
+     Cloudflare in ra dạng https://pana-ai.<tên-tài-khoản>.workers.dev
+
+     TUYỆT ĐỐI KHÔNG đặt API key của Gemini ở file này. File này công khai
+     trên GitHub Pages, ai xem nguồn cũng đọc được. Key chỉ nằm trong
+     Worker, cài bằng lệnh `npx wrangler secret put GEMINI_API_KEY`.
+     ════════════════════════════════════════════════════════════════════ -->
+<script>
+window.PANA_CONFIG = {
+  api: "https://pana-ai.hai-cbe.workers.dev"
+};
+</script>
 
 <header class="top"><div class="wrap top-in">
  <div class="brand"><i>a</i> PHÚC ANH</div>
@@ -258,7 +293,7 @@ footer a{color:#BBD0F0}
    </svg>
    <div>
     <h3>PANA đang trực</h3>
-    <p>Trợ lý AI của Phúc Anh · dữ liệu sản phẩm cập nhật 09/08/2026</p>
+    <p id="panaEngine">Trợ lý AI của Phúc Anh · dữ liệu sản phẩm cập nhật 09/08/2026</p>
    </div>
   </div>
   <div class="pana-body">
@@ -266,7 +301,7 @@ footer a{color:#BBD0F0}
   </div>
  </div>
 
- <div class="note" style="margin-top:18px">
+ <div class="note" style="margin-top:18px" id="panaNote">
   <b>Về bản demo này:</b> PANA ở đây chạy bằng bộ luật tư vấn do Deman AI Lab viết, đặt ngay trong trang
   nên trả lời tức thì và không cần kết nối máy chủ. Bản triển khai thật sẽ nối vào mô hình ngôn ngữ,
   tồn kho và giá theo thời gian thực, cùng lịch sử hội thoại trên Zalo OA. Giá và quà tặng trong trang
@@ -380,7 +415,7 @@ footer a{color:#BBD0F0}
    <rect x="34" y="39" width="32" height="21" rx="9" fill="#0E1B3A"/>
    <path d="M43 48 q3-4 6 0M53 48 q3-4 6 0" stroke="#4FA8FF" stroke-width="3" fill="none" stroke-linecap="round"/>
    <rect x="48" y="19" width="4" height="12" rx="2" fill="#0E1B3A"/><circle cx="50" cy="16" r="5" fill="#FFC93C"/></svg>
-  <div><b>PANA</b><small>Trợ lý chọn máy · đang trực</small></div>
+  <div><b>PANA</b><small id="panaStatus">Trợ lý chọn máy · đang trực</small></div>
   <button class="x" onclick="toggleChat(false)">×</button>
  </div>
  <div class="ch-b" id="chb"></div>
@@ -546,6 +581,22 @@ function renderResult(){
   const M = DB.majors.find(m=>m.k===ans.major);
   const code = 'PANA-' + ans.major.slice(0,2).toUpperCase() + '-' + top.p.id.slice(0,3).toUpperCase()
     + '-' + Math.random().toString(36).slice(2,6).toUpperCase();
+
+  // Ghi lại ngữ cảnh quiz để phần chat cá nhân hoá: người dùng hỏi "máy đó pin mấy tiếng?"
+  // thì PANA biết "máy đó" là máy nào, không hỏi lại từ đầu.
+  const B = DB.budgets.find(b=>b.k===ans.budget), PR = DB.prios.find(p=>p.k===ans.prio);
+  panaContext = [
+    `Người dùng vừa làm quiz trên trang, kết quả như sau:`,
+    `- Ngành học: ${M.n}`,
+    `- Ngân sách: ${B.n}`,
+    `- Ưu tiên số một: ${PR.n}`,
+    `- Hệ điều hành quen dùng: ${ans.os === 'win' ? 'Windows' : ans.os === 'mac' ? 'macOS' : 'chưa quen cái nào'}`,
+    `- Máy trang đã gợi ý: ${top.p.name} (${money(top.p.price)})`,
+    `- Hai máy thay thế: ${a1.p.name}; ${a2.p.name}`,
+    `- Mã tư vấn đã cấp: ${code}`,
+    `Khi người dùng nói "máy đó", "chiếc này", "máy bạn vừa gợi ý" thì hiểu là ${top.p.name}.`,
+    `Đừng hỏi lại ngành học và ngân sách nữa — đã có ở trên.`
+  ].join('\n');
   document.getElementById('quiz').innerHTML = `
    <div class="res-top"><div class="lbl">PANA nói thật</div><div class="res-say">${panaSay(rank)}</div></div>
    <div class="pick">
@@ -740,9 +791,66 @@ function push(who, html){
     : `<div class="msg">${AV}<div class="bub">${html}</div></div>`);
   b.scrollTop = b.scrollHeight;
 }
-function ask(txt){
-  push('me', txt);
-  setTimeout(()=>push('pana', reply(txt)), 260);
+
+/* ══════════ LỚP GEMINI ══════════
+   Có URL Worker thì PANA suy luận bằng Gemini; không có, hoặc mạng lỗi,
+   thì lùi về bộ luật reply() ngay trong trang. Người dùng luôn được trả lời. */
+const PANA_API = ((window.PANA_CONFIG || {}).api || '').trim();
+let panaHistory = [];      // 12 lượt gần nhất, gửi kèm để PANA nhớ ngữ cảnh
+let panaContext = '';      // kết quả quiz, để PANA biết "máy đó" là máy nào
+let geminiOn = null;       // null = chưa biết, true = có khoá, false = chạy bộ luật
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function fmt(t){
+  const lines = esc(t).split('\n').map(l => l.trim()).filter(Boolean);
+  let out = '', bullets = [];
+  const flush = () => { if (bullets.length){ out += `<ul class="g">${bullets.map(b=>`<li>${b}</li>`).join('')}</ul>`; bullets = []; } };
+  lines.forEach(l => {
+    if (/^[-–•*]\s+/.test(l)) bullets.push(l.replace(/^[-–•*]\s+/, ''));
+    else { flush(); out += `<p style="margin:0 0 7px">${l}</p>`; }
+  });
+  flush();
+  return out.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+}
+// PANA nhắc tên máy nào thì gắn luôn thẻ máy đó cho người dùng bấm vào
+function cardIfMentioned(t){
+  const n = norm(t);
+  const hit = P.find(p => n.includes(norm(p.name.split(' ')[0])));
+  return hit ? pmini(hit) : '';
+}
+function typing(){
+  const b = document.getElementById('chb');
+  b.insertAdjacentHTML('beforeend',
+    `<div class="msg" id="tping">${AV}<div class="bub"><span class="dots"><i></i><i></i><i></i></span></div></div>`);
+  b.scrollTop = b.scrollHeight;
+  return document.getElementById('tping');
+}
+
+async function ask(txt){
+  push('me', esc(txt));
+  if (!PANA_API || geminiOn === false){ setTimeout(()=>push('pana', reply(txt)), 260); return; }
+
+  const t = typing();
+  const ctrl = new AbortController();
+  const timer = setTimeout(()=>ctrl.abort(), 20000);
+  try {
+    const r = await fetch(PANA_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      signal: ctrl.signal,
+      body: JSON.stringify({ message: txt, history: panaHistory.slice(-12), context: panaContext })
+    });
+    clearTimeout(timer);
+    const d = await r.json();
+    t.remove();
+    if (!d.reply) throw new Error('empty');
+    push('pana', fmt(d.reply) + cardIfMentioned(d.reply));
+    panaHistory.push({ role:'user', text: txt }, { role:'model', text: d.reply });
+  } catch (e) {
+    clearTimeout(timer);
+    if (document.getElementById('tping')) t.remove();
+    push('pana', reply(txt));   // lùi về bộ luật, không để người dùng trơ màn hình
+  }
 }
 function askAbout(id){
   toggleChat(true);
@@ -753,11 +861,41 @@ function toggleChat(on){
   document.getElementById('chat').classList.toggle('on', on);
   document.getElementById('fab').style.display = on ? 'none' : 'flex';
   if (on && !document.getElementById('chb').innerHTML) {
+    const extra = geminiOn
+      ? `PANA nhớ được câu bạn vừa hỏi, nên cứ hỏi tiếp kiểu «thế còn con Dell?» — không phải kể lại từ đầu.`
+      : `PANA được phép khuyên bạn mua máy rẻ hơn.`;
     push('pana', `Xin chào! PANA đây — trợ lý chọn máy của Phúc Anh.
      <span class="mini">Nói cho PANA biết bạn học ngành gì và bố mẹ đưa khoảng bao nhiêu, PANA sẽ chỉ chiếc phù hợp
-     và nói luôn nhược điểm của nó. PANA được phép khuyên bạn mua máy rẻ hơn.</span>`);
+     và nói luôn nhược điểm của nó. ${extra}</span>`);
     document.getElementById('qr').innerHTML = QUICK.map(q=>`<button onclick="ask('${q}')">${q}</button>`).join('');
   }
+}
+
+/* Hỏi Worker xem đã cài khoá Gemini chưa, rồi mới bật nhãn "Gemini".
+   Endpoint này KHÔNG gọi Gemini nên không tốn token, và không bao giờ trả về khoá.
+   Nhờ vậy nhãn trên trang luôn nói đúng sự thật: chưa cài khoá thì không khoe Gemini. */
+async function panaHealth(){
+  try{
+    const u = PANA_API + (PANA_API.includes('?') ? '&' : '?') + 'health=1';
+    const d = await (await fetch(u)).json();
+    geminiOn = Boolean(d && d.keyInstalled);
+    if (geminiOn) markGemini();
+  }catch(e){ geminiOn = false; }   // Worker chết thì im lặng chạy bộ luật
+}
+if (PANA_API) panaHealth();
+
+function markGemini(){
+  const st = document.getElementById('panaStatus');
+  if (st) st.innerHTML = 'Trợ lý chọn máy <span class="eng">✦ Gemini</span>';
+  const en = document.getElementById('panaEngine');
+  if (en) en.innerHTML = 'Trợ lý AI của Phúc Anh · dữ liệu sản phẩm cập nhật 09/08/2026'
+    + '<span class="eng">✦ Đang chạy Gemini</span>';
+  const nt = document.getElementById('panaNote');
+  if (nt) nt.innerHTML = '<b>Về bản này:</b> PANA đang chạy bằng mô hình ngôn ngữ Gemini qua một Worker giữ khoá '
+    + 'ở phía máy chủ — nên nó suy luận được câu hỏi lạ, nhớ ngữ cảnh hội thoại và cá nhân hoá theo kết quả quiz '
+    + 'của bạn. Dữ liệu sáu máy nạp cứng vào mô hình, và PANA bị cấm đoán: thông số nào Phúc Anh chưa công bố thì '
+    + 'nó nói thẳng là chưa có. Mất mạng thì PANA tự lùi về bộ luật trong trang, vẫn trả lời được. Giá và quà tặng '
+    + 'lấy từ phucanh.vn ngày 09/08/2026 — vui lòng xác nhận lại tại quầy trước khi thanh toán.';
 }
 document.getElementById('fab').onclick = () => toggleChat(true);
 document.getElementById('chf').onsubmit = e => {

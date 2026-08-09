@@ -9,6 +9,9 @@ Landing page trình Ban lãnh đạo: chiến lược, kế hoạch thực thi 3
 - `tu-van.html` — **landing page chiến dịch Back to School 2026** + trợ lý PANA chạy được ngay
   (quiz tư vấn 4 câu, chatbot 20+ chủ đề, 6 máy chủ lực, bảng so sánh, mã tư vấn tại quầy).
   Chạy hoàn toàn client-side, không cần máy chủ.
+- `pana-ai/` — Cloudflare Worker nối PANA vào Gemini (giữ API key ở phía máy chủ),
+  kèm `PANA_BRAND_VOICE.md` (phong cách giao tiếp chuẩn thương hiệu + system prompt)
+  và `HUONG_DAN_TRIEN_KHAI.md` (các bước deploy, cài key, kiểm thử)
 - `assets/` — 6 video bản dựng thử đã nén cho web, ảnh tạo hình nhân vật, trang preview comic
 
 **Chạy tại chỗ:** mở `index.html` bằng Chrome. Phần 10C nhúng sẵn `tu-van.html` để bấm thử PANA
