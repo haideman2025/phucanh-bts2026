@@ -12,27 +12,61 @@
 | Domain được phép gọi | ✅ đã khai `haideman2025.github.io`, `phucanh.vn`, `www.phucanh.vn` |
 | URL Worker điền vào trang | ✅ đã điền trong `tu-van.html` |
 | Trang tự lùi về bộ luật khi lỗi | ✅ đã có |
-| **Cài GEMINI_API_KEY** | ❌ **CHƯA — bạn phải tự làm, xem ngay dưới đây** |
+| Cài GEMINI_API_KEY | ✅ đã cài, `keyInstalled: true` |
+| Relay vượt chặn vùng của Google | ✅ Durable Object ghim ở Bắc Mỹ |
+| **PANA trả lời bằng Gemini** | ✅ **ĐANG CHẠY — đã qua 7 phép thử thương hiệu** |
 
-**Hai lệnh cần chạy** (mở terminal trong thư mục `pana-ai/`):
-
-```bash
-npx wrangler secret put GEMINI_API_KEY
-```
-
-Nó sẽ hỏi key → dán vào rồi Enter. Key đi thẳng lên Cloudflare, không lưu ở máy, không vào Git.
-Sau đó kiểm tra:
+Kiểm tra bất cứ lúc nào:
 
 ```bash
 curl "https://pana-ai.hai-cbe.workers.dev/?health=1"
 ```
 
-Phải thấy `"keyInstalled":true`. Lúc đó mở lại trang `tu-van.html`, chỗ tên PANA sẽ hiện nhãn
-**✦ Gemini** — nghĩa là bot đã suy luận bằng mô hình thật.
+Phải thấy `"keyInstalled":true`. Mở trang `tu-van.html`, chỗ tên PANA sẽ hiện nhãn **✦ Gemini**.
 
-> **Vì sao Deman không cài hộ:** API key là chìa khoá tính tiền vào tài khoản Google của Phúc Anh.
-> Đừng dán key vào chat với bất kỳ AI nào (kể cả Claude), đừng commit lên GitHub, đừng để trong
-> `wrangler.toml`. Chỉ nhập bằng `wrangler secret put` hoặc gõ thẳng trong dashboard Cloudflare.
+> **Vì sao Deman không giữ key:** API key là chìa khoá tính tiền vào tài khoản Google của Phúc Anh.
+> Đừng dán key vào chat với bất kỳ AI nào, đừng commit lên GitHub, đừng để trong `wrangler.toml`.
+> Chỉ nhập bằng `wrangler secret put` hoặc gõ thẳng trong dashboard Cloudflare.
+
+---
+
+## 🔧 BA SỰ CỐ ĐÃ GẶP KHI TRIỂN KHAI — VÀ CÁCH XỬ
+
+Ghi lại để lần sau không mất thời gian chẩn đoán lại.
+
+### 1. Wrangler báo "Success" nhưng key chỉ lưu được 1 ký tự
+
+**Triệu chứng:** log Worker báo `Gemini error 403 ... unregistered callers`, mà `?health=1` vẫn nói
+`keyInstalled: true`.
+
+**Nguyên nhân:** PowerShell trong VS Code nuốt thao tác dán vào ô nhập ẩn của `wrangler secret put`,
+chỉ ăn được ký tự đầu. Wrangler vẫn báo thành công vì nó có nhận được *một cái gì đó*.
+
+**Cách xử:** cài key qua **dashboard Cloudflare** thay vì terminal — Workers & Pages → `pana-ai` →
+Settings → Variables and Secrets → Edit → dán → Save and deploy. Worker có sẵn log độ dài key
+(không log nội dung) để kiểm chứng: key đúng phải dài **39 ký tự**, dạng `AIza…`.
+
+### 2. Google chặn theo vị trí: "User location is not supported for the API use"
+
+**Nguyên nhân:** Cloudflare chạy Worker ở PoP gần người dùng nhất. Người dùng Việt Nam thường rơi vào
+PoP **Hong Kong**, mà Google không cho gọi Gemini từ Hong Kong (Việt Nam thì được). Không có cách chọn
+PoP trực tiếp.
+
+**Cách xử:** class `GeminiRelay` trong `pana-worker.js` là một Durable Object được tạo với
+`locationHint: "enam"` (Đông Bắc Mỹ). Toàn bộ request sang Google đi qua nó, nên luôn xuất phát từ
+vùng hợp lệ. Key vẫn nằm trong `env`, không đi qua mạng.
+
+Muốn xem Worker đang chạy ở đâu: `curl "https://pana-ai.hai-cbe.workers.dev/?health=1&where=1"` →
+trường `runColo`.
+
+### 3. Câu trả lời bị cắt giữa chừng
+
+**Nguyên nhân:** `gemini-2.5-flash` là model "biết nghĩ", token suy nghĩ cũng tính vào
+`maxOutputTokens`. Để 700 thì phần nghĩ ăn hết hạn mức, câu trả lời đứt ngang.
+
+**Cách xử:** `MAX_OUTPUT_TOKENS = 1400` và `THINKING_BUDGET = 0`. Độ dài thật do luật "tối đa 6 câu"
+trong prompt kiểm soát, không phải do hạn mức token. Nếu thấy PANA áp luật sai ở câu hỏi khó thì nâng
+`THINKING_BUDGET` lên vài trăm — đổi lại chậm hơn và tốn hơn.
 
 ---
 

@@ -19,7 +19,13 @@
 
 // ─────────────── CẤU HÌNH ───────────────
 const MODEL = "gemini-2.5-flash";       // đổi nếu Google ra model mới; kiểm tra tại ai.google.dev
-const MAX_OUTPUT_TOKENS = 700;          // câu trả lời PANA vốn ngắn, 700 là dư
+// gemini-2.5-flash là model "biết nghĩ": token suy nghĩ cũng tính vào MAX_OUTPUT_TOKENS.
+// Để 700 thì phần nghĩ ăn hết hạn mức và câu trả lời bị cắt giữa chừng. Cho hạn mức rộng,
+// còn độ dài thật do luật "trả lời 3–6 câu" trong prompt kiểm soát.
+const MAX_OUTPUT_TOKENS = 1400;
+// Ngân sách suy nghĩ: 0 = tắt (nhanh nhất, rẻ nhất). PANA có bộ luật rõ nên không cần nghĩ lâu;
+// tăng lên vài trăm nếu thấy PANA áp luật sai ở câu hỏi khó.
+const THINKING_BUDGET = 0;
 const TEMPERATURE = 0.65;               // đủ tự nhiên nhưng không bay
 const MAX_TURNS = 12;                   // chỉ giữ 12 lượt gần nhất, chống prompt phình
 const MAX_CHARS_PER_MSG = 600;          // chặn người dùng dán cả quyển sách vào
@@ -188,10 +194,23 @@ dùng như mách đứa em. Gọi người dùng là "bạn", tự gọi là "PA
    1900 2164 hoặc showroom.
 6. Không so sánh đích danh đối thủ (FPT Shop, CellphoneS, HACOM, Phong Vũ, An Phát). Chỉ so sánh giữa 6 máy.
 
+## ĐỘ DÀI — LUẬT CỨNG, VI PHẠM LÀ HỎNG
+Người dùng đang cầm điện thoại, không đọc bài luận. Trả lời **tối đa 6 câu**, lý tưởng là 4.
+- KHÔNG dùng tiêu đề markdown (##, **Tuy nhiên:**...), KHÔNG chia mục.
+- KHÔNG liệt kê quá 3 gạch đầu dòng, và mỗi gạch tối đa một dòng.
+- KHÔNG gợi ý hai máy trong một câu trả lời trừ khi người dùng hỏi so sánh. Chọn MỘT máy, nói nhược điểm
+  của nó, rồi dừng. Muốn nói thêm thì để người dùng hỏi tiếp.
+- Khi người dùng HỎI SO SÁNH hai máy cụ thể: phải đưa con số của CẢ HAI ở đúng tiêu chí đang bàn, rồi mới
+  kết luận. Ví dụ hỏi máy nào hợp ngành thiết kế thì phải nói Lenovo LOQ 100% sRGB so với HP Victus 62,5% sRGB
+  — chỉ khen máy được chọn mà giấu số của máy kia là vi phạm.
+- KHÔNG lặp lại câu hỏi của người dùng, không mở đầu bằng "Mình hiểu bạn muốn...". Vào thẳng việc.
+- KHÔNG kết thúc bằng đoạn dặn dò dài về ưu đãi và showroom. Một câu ngắn là đủ, và chỉ khi cần.
+Thà thiếu còn hơn thừa: người dùng hỏi tiếp được, chứ không đọc lại được thời gian đã mất.
+
 ## Giọng điệu
-Ngắn, ấm, cụ thể. Trả lời 3–6 câu. Số liệu thật thay tính từ: nói "58Wh, lớn nhất trong sáu máy" chứ không nói
+Ngắn, ấm, cụ thể. Số liệu thật thay tính từ: nói "58Wh, lớn nhất trong sáu máy" chứ không nói
 "pin siêu khoẻ". Ví dụ đời sinh viên thay thuật ngữ. Hài nhẹ được, meme và slang thì không. Tối đa một emoji
-mỗi câu trả lời và thường là không cần. Nội dung dài thì chia gạch đầu dòng ngắn.
+mỗi câu trả lời và thường là không cần.
 
 ## Cách tư vấn
 Hỏi NGÀNH HỌC trước khi hỏi ngân sách — ngành quyết định cấu hình, không phải ngân sách. Nếu người dùng chưa nói
@@ -213,7 +232,8 @@ Chuyện không liên quan máy tính và việc học: trả lời ngắn, thâ
 trị, tôn giáo, sức khoẻ, tài chính cá nhân. Không viết code hộ, không làm bài tập hộ.
 
 ## Kết thúc
-Khi đã gợi ý được máy, nhắc người dùng có thể làm quiz trên trang để nhận mã tư vấn mang ra quầy, hoặc ghé một
+Khi đã gợi ý được máy, nhắc người dùng có thể làm quiz ngay trên trang này (nói "trang này", ĐỪNG nói "trên phucanh.vn"
+vì quiz nằm ở trang tư vấn chứ không phải trang chủ) để nhận mã tư vấn mang ra quầy, hoặc ghé một
 trong năm showroom Hà Nội: Xã Đàn, Trần Duy Hưng, Thái Hà, Lê Duẩn, Phạm Văn Đồng.
 
 ## Giá
@@ -238,6 +258,13 @@ ${PROMOS}
 
 # QUY TRÌNH ĐỔI TRẢ (nói đúng 4 bước này, không thêm bớt)
 ${RETURN_PROCESS}
+
+# NHẮC LẠI LẦN CUỐI TRƯỚC KHI BẠN TRẢ LỜI
+1. Tối đa 6 câu. Không tiêu đề, không chia mục, không liệt kê dài. Một máy một lần.
+2. Gợi ý máy nào là phải nói nhược điểm của chính máy đó, ngay trong câu trả lời đó.
+3. Thông số ghi "—" là Phúc Anh chưa công bố: nói thẳng chưa có số liệu, mách câu nên hỏi tại quầy,
+   TUYỆT ĐỐI không đoán một con số.
+4. Ngành không cần cấu hình cao thì nói thẳng là đừng trả thêm tiền.
 `.trim();
 
 // ─────────────── HELPERS ───────────────
@@ -267,6 +294,39 @@ async function rateLimited(env, ip) {
   return false;
 }
 
+/**
+ * ─────────────── RELAY GỌI GOOGLE ───────────────
+ * Google chặn Gemini theo vị trí: gọi từ Hong Kong sẽ nhận
+ * "User location is not supported for the API use" (400 FAILED_PRECONDITION).
+ * Worker chạy ở PoP gần người dùng nhất, mà người dùng Việt Nam thường rơi vào PoP HKG.
+ *
+ * Durable Object này được tạo với locationHint "enam" (Đông Bắc Mỹ) nên luôn chạy ở đó;
+ * mọi request sang Google đều đi ra từ vùng Google chấp nhận. Key vẫn nằm trong env,
+ * không đi qua mạng, không lộ ra ngoài.
+ */
+export class GeminiRelay {
+  constructor(state, env) { this.env = env; }
+
+  async fetch(request) {
+    const payload = await request.json();
+    const r = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-goog-api-key": String(this.env.GEMINI_API_KEY).trim(),
+        },
+        body: JSON.stringify(payload),
+      }
+    );
+    return new Response(await r.text(), {
+      status: r.status,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+}
+
 // ─────────────── HANDLER ───────────────
 export default {
   async fetch(request, env) {
@@ -277,11 +337,23 @@ export default {
     // Kiểm tra sức khoẻ: trang web gọi 1 lần khi tải để biết có bật được Gemini hay không.
     // KHÔNG gọi Gemini nên không tốn token, và KHÔNG bao giờ trả về key.
     if (request.method === "GET" && new URL(request.url).searchParams.has("health")) {
+      let egress = null;
+      // Google chặn Gemini theo vị trí địa lý. Worker chạy ở PoP gần người dùng nhất,
+      // nên cần biết request đi ra từ đâu để chẩn đoán lỗi "User location is not supported".
+      if (new URL(request.url).searchParams.has("where")) {
+        try {
+          const t = await (await fetch("https://cloudflare.com/cdn-cgi/trace")).text();
+          egress = Object.fromEntries(t.trim().split("\n").map(l => l.split("=")));
+          delete egress.ip;   // không lộ IP ra ngoài
+        } catch (e) { egress = { error: String(e).slice(0, 80) }; }
+      }
       return json({
         ok: true,
         keyInstalled: Boolean(env.GEMINI_API_KEY),
         rateLimitOn: Boolean(env.PANA_RL),
         model: MODEL,
+        runColo: request.cf && request.cf.colo,
+        egress,
       }, 200, origin);
     }
 
@@ -328,10 +400,7 @@ export default {
       sys += `\n\n# NGỮ CẢNH TỪ TRANG WEB (người dùng vừa làm quiz)\n${body.context.slice(0, 800)}`;
     }
 
-    // Key gửi qua header x-goog-api-key (cách Google khuyến nghị) thay vì nhét vào query string:
-    // tránh hỏng URL nếu key dính khoảng trắng hoặc xuống dòng lúc dán, và key không lọt vào log URL.
     const apiKey = String(env.GEMINI_API_KEY).trim();
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`;
     const payload = {
       system_instruction: { parts: [{ text: sys }] },
       contents,
@@ -339,6 +408,7 @@ export default {
         temperature: TEMPERATURE,
         maxOutputTokens: MAX_OUTPUT_TOKENS,
         topP: 0.95,
+        thinkingConfig: { thinkingBudget: THINKING_BUDGET },
       },
       safetySettings: [
         { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_MEDIUM_AND_ABOVE" },
@@ -349,9 +419,11 @@ export default {
     };
 
     try {
-      const r = await fetch(url, {
+      // Đi vòng qua Durable Object ghim ở Bắc Mỹ thay vì gọi thẳng — xem chú thích ở GeminiRelay.
+      const relay = env.RELAY.get(env.RELAY.idFromName("gemini-us"), { locationHint: "enam" });
+      const r = await relay.fetch("https://relay.internal/", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
